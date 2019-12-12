@@ -8,6 +8,7 @@
 #include "libs/filecontrol.hpp"
 
 #include <opencv2/opencv.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
 using namespace cv;
 using namespace std;
@@ -46,6 +47,10 @@ private slots:
     void on_gageSlider_valueChanged(int value);
 
     void on_sharpenBtn_clicked();
+
+    void on_invertBtn_clicked();
+
+    void on_detectionBtn_clicked();
 
 private:
     bool captured; //captured!

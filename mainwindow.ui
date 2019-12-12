@@ -260,7 +260,7 @@
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1,1,1">
+       <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1,1,1,1,1">
         <item>
          <widget class="QPushButton" name="blackBtn">
           <property name="text">
@@ -279,6 +279,20 @@
          <widget class="QPushButton" name="sharpenBtn">
           <property name="text">
            <string>Sharpen</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="invertBtn">
+          <property name="text">
+           <string>Invert</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="detectionBtn">
+          <property name="text">
+           <string>Detect</string>
           </property>
          </widget>
         </item>

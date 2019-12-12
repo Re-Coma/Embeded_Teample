@@ -278,3 +278,45 @@ void MainWindow::on_sharpenBtn_clicked()
     }
 
 }
+
+void MainWindow::on_invertBtn_clicked()
+{
+    //none capture
+    if(!this->captured)
+    {
+        QMessageBox warningBox;
+        warningBox.setText("Warning");
+        warningBox.setInformativeText("Capture your Picture First!");
+        warningBox.setStandardButtons(QMessageBox::Ok);
+        warningBox.exec();
+    }
+    else
+    {
+        auto result = imread("tmp_changed.jpg", IMREAD_COLOR);
+        bitwise_not(result, result);
+        imwrite("tmp_changed.jpg", result);
+        QPixmap pix("tmp_changed.jpg");
+        this->ui->picLabel->setPixmap(pix);
+    }
+}
+
+void MainWindow::on_detectionBtn_clicked()
+{
+    //none capture
+    if(!this->captured)
+    {
+        QMessageBox warningBox;
+        warningBox.setText("Warning");
+        warningBox.setInformativeText("Capture your Picture First!");
+        warningBox.setStandardButtons(QMessageBox::Ok);
+        warningBox.exec();
+    }
+    else
+    {
+        auto result = imread("tmp_changed.jpg", IMREAD_COLOR);
+        Canny(result, result, 50, 200);
+        imwrite("tmp_changed.jpg", result);
+        QPixmap pix("tmp_changed.jpg");
+        this->ui->picLabel->setPixmap(pix);
+    }
+}
