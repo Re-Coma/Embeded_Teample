@@ -25,7 +25,7 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <layout class="QVBoxLayout" name="mainVerticalLayout" stretch="10,1,1,1">
+     <layout class="QVBoxLayout" name="mainVerticalLayout" stretch="12,1,1,1,1">
       <property name="leftMargin">
        <number>10</number>
       </property>
@@ -41,7 +41,7 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="1,9,1">
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_2" stretch=""/>
+         <layout class="QVBoxLayout" name="verticalLayout_2"/>
         </item>
         <item>
          <widget class="QLabel" name="picLabel">
@@ -51,7 +51,7 @@
          </widget>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_3" stretch=""/>
+         <layout class="QVBoxLayout" name="verticalLayout_3"/>
         </item>
        </layout>
       </item>
@@ -73,21 +73,30 @@
          <number>10</number>
         </property>
         <item>
-         <widget class="QLabel" name="label">
+         <widget class="QLabel" name="gageName">
           <property name="text">
            <string>Gage</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QSlider" name="horizontalSlider">
+         <widget class="QSlider" name="gageSlider">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>3</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximum">
+           <number>30</number>
+          </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_2">
+         <widget class="QLabel" name="gageLevel">
           <property name="text">
            <string>0</string>
           </property>
@@ -250,17 +259,76 @@
         </property>
        </widget>
       </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1,1,1">
+        <item>
+         <widget class="QPushButton" name="blackBtn">
+          <property name="text">
+           <string>ToBlack</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="blurBtn">
+          <property name="text">
+           <string>Blurry</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="sharpenBtn">
+          <property name="text">
+           <string>Sharpen</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="returnBtn">
+          <property name="palette">
+           <palette>
+            <active>
+             <colorrole role="Button">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>245</red>
+                <green>121</green>
+                <blue>0</blue>
+               </color>
+              </brush>
+             </colorrole>
+            </active>
+            <inactive>
+             <colorrole role="Button">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>245</red>
+                <green>121</green>
+                <blue>0</blue>
+               </color>
+              </brush>
+             </colorrole>
+            </inactive>
+            <disabled>
+             <colorrole role="Button">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>245</red>
+                <green>121</green>
+                <blue>0</blue>
+               </color>
+              </brush>
+             </colorrole>
+            </disabled>
+           </palette>
+          </property>
+          <property name="text">
+           <string>Return</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
      </layout>
-    </item>
-    <item row="0" column="1">
-     <widget class="QProgressBar" name="printGage">
-      <property name="value">
-       <number>0</number>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-     </widget>
     </item>
    </layout>
   </widget>

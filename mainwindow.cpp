@@ -14,6 +14,7 @@
 #include <QPixmap>
 
 using namespace std;
+using namespace cv;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -33,6 +34,13 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     this->captured = false;
     this->revived = false;
+    this->currentFileName = "pictures/"+this->fileControl.get_filename_native();
+    this->blurSetting = false;
+
+    ui->gageName->hide();
+    ui->gageLevel->hide();
+    ui->gageSlider->hide();
+
 }
 MainWindow::~MainWindow()
 {
@@ -67,6 +75,12 @@ void MainWindow::on_captureBtn_clicked()
 
         //Change Label
         this->ui->fileName->setText("CAPTURED FILE!!");
+        this->currentCaptured = imread("tmp.jpg", IMREAD_COLOR);
+        this->currentFileName = "tmp.jpg";
+
+        //copy
+        imwrite("tmp_changed.jpg", this->currentCaptured);
+        this->currentFileName = "tmp_changed.jpg";
     }
 }
 
@@ -144,4 +158,123 @@ void MainWindow::on_printBtn_clicked()
     PrintProgress progress;
     progress.setModal(true);
     progress.exec();
+}
+
+//to black
+void MainWindow::on_blackBtn_clicked()
+{
+    //none capture
+    if(!this->captured)
+    {
+        QMessageBox warningBox;
+        warningBox.setText("Warning");
+        warningBox.setInformativeText("Capture your Picture First!");
+        warningBox.setStandardButtons(QMessageBox::Ok);
+        warningBox.exec();
+    }
+    else //captured
+    {
+        this->changedCaptured = imread("tmp_changed.jpg", IMREAD_GRAYSCALE);
+        imwrite("tmp_changed.jpg", this->changedCaptured);
+
+        QPixmap pix("tmp_changed.jpg");
+        this->ui->picLabel->setPixmap(pix);
+    }
+}
+
+//reset
+void MainWindow::on_returnBtn_clicked()
+{
+
+    //copy
+    imwrite("tmp_changed.jpg", this->currentCaptured);
+    QPixmap pix("tmp_changed.jpg");
+    this->ui->picLabel->setPixmap(pix);
+    this->currentFileName = "tmp_changed.jpg";
+
+    //copy
+
+    //reset gaussian gage
+    this->ui->gageLevel->setText(QString::number(0));
+    this->ui->gageName->hide();
+    this->ui->gageLevel->hide();
+    this->ui->gageSlider->hide();
+    this->ui->gageSlider->setValue(0);
+}
+
+void MainWindow::on_blurBtn_clicked()
+{
+    //none capture
+    if(!this->captured)
+    {
+        QMessageBox warningBox;
+        warningBox.setText("Warning");
+        warningBox.setInformativeText("Capture your Picture First!");
+        warningBox.setStandardButtons(QMessageBox::Ok);
+        warningBox.exec();
+    }
+    else
+    {
+        //none_click->click
+        if(!this->blurSetting )
+        {
+            this->blurSetting = true;
+            ui->gageName->show();
+            ui->gageLevel->show();
+            ui->gageSlider->show();
+            gaussiantmp = imread(this->currentFileName);
+        }
+        //click->non_click
+        else
+        {
+            this->blurSetting = false;
+            ui->gageName->hide();
+            ui->gageLevel->hide();
+            ui->gageSlider->hide();
+        }
+    }
+
+}
+
+void MainWindow::on_gageSlider_valueChanged(int value)
+{
+    Mat filterImg;
+    GaussianBlur(gaussiantmp, filterImg, Size(3,3), 0);
+    for(int i = 0; i < value; i++)
+        GaussianBlur(filterImg, filterImg, Size(3,3), 0);
+
+    imwrite(this->currentFileName, filterImg);
+    QPixmap pix(QString::fromStdString(this->currentFileName));
+    this->ui->picLabel->setPixmap(pix);
+    ui->gageLevel->setText(QString::number(value));
+}
+
+void MainWindow::on_sharpenBtn_clicked()
+{
+    //none capture
+    if(!this->captured)
+    {
+        QMessageBox warningBox;
+        warningBox.setText("Warning");
+        warningBox.setInformativeText("Capture your Picture First!");
+        warningBox.setStandardButtons(QMessageBox::Ok);
+        warningBox.exec();
+    }
+    else
+    {
+        auto img = imread("tmp_changed.jpg", CV_LOAD_IMAGE_COLOR);
+
+        vector<Mat> channels;
+        Mat img_hist_equalized;
+        cvtColor(img, img_hist_equalized, CV_BGR2YCrCb);
+        cv::split(img_hist_equalized, channels);
+        equalizeHist(channels[0], channels[0]);
+        merge(channels, img_hist_equalized);
+        cvtColor(img_hist_equalized, img_hist_equalized,CV_YCrCb2BGR);
+
+        imwrite("tmp_changed.jpg", img_hist_equalized);
+        QPixmap pix("tmp_changed.jpg");
+        this->ui->picLabel->setPixmap(pix);
+    }
+
 }

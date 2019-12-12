@@ -7,6 +7,11 @@
 #include <QMessageBox>
 #include "libs/filecontrol.hpp"
 
+#include <opencv2/opencv.hpp>
+
+using namespace cv;
+using namespace std;
+
 namespace Ui {
 class MainWindow;
 }
@@ -32,11 +37,30 @@ private slots:
 
     void on_printBtn_clicked();
 
+    void on_blackBtn_clicked();
+
+    void on_returnBtn_clicked();
+
+    void on_blurBtn_clicked();
+
+    void on_gageSlider_valueChanged(int value);
+
+    void on_sharpenBtn_clicked();
+
 private:
     bool captured; //captured!
     bool revived; //revived
     Ui::MainWindow *ui;
     FileControl fileControl;
+
+    Mat currentCaptured; //captured picture
+    Mat changedCaptured; //by opencv
+    Mat gaussiantmp; //only Gaussian
+
+    string currentFileName;
+
+    //gaussian clicked
+    bool blurSetting;
 };
 
 #endif // MAINWINDOW_H

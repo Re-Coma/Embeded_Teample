@@ -37,3 +37,6 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui \
     savedialog.ui \
     printprogress.ui
+LIBS += $(pkg-config opencv --cflags --libs) \
+            -lopencv_core -lopencv_highgui \
+            -lopencv_imgproc
