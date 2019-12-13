@@ -95,3 +95,17 @@ void FileControl::add_pic(string& filename)
     this->current_pos = --this->file_list.end();
 }
 
+//wrapping functions
+int wrapped::w_open(const char* filename, int flags)
+{
+    return open(filename, flags);
+}
+ssize_t wrapped::w_read(int fd, void* buf, size_t count)
+{
+    return read(fd, buf, count);
+}
+ssize_t wrapped::w_write(int fd, const void* buf, size_t count)
+{
+    return write(fd, buf, count);
+}
+

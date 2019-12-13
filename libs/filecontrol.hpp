@@ -6,6 +6,9 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <dirent.h>
+#include <unistd.h>
+#include <string.h>
+#include <fcntl.h>
 #include <iostream>
 #include <QString>
 
@@ -36,6 +39,13 @@ public:
     bool prev(void);
     bool next(void);
     void add_pic(string& filename);
+};
+
+namespace wrapped
+{
+    int w_open(const char* filename, int flags);
+    ssize_t w_read(int fd, void* buf, size_t count);
+    ssize_t w_write(int fd, const void* buf, size_t count);
 };
 
 #endif
