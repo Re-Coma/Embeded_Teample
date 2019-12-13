@@ -15,6 +15,8 @@
 #include <fcntl.h>
 #include <sys/io.h>
 #include <signal.h>
+#include <string.h>
+#include <sys/stat.h>
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -25,6 +27,13 @@
 
 //MATRIX BUTTON
 #define FGPA_DOT_DEVICE "/dev/fpga_dot"
+
+//FND
+#define FND_DEVICE "/dev/fpga_fnd"
+#define MAX_DIGIT 4
+
+//LED
+#define LED_DEVICE  "/dev/fpga_led"
 
 using namespace cv;
 using namespace std;
@@ -94,6 +103,20 @@ private:
     int matrix_dev;
     int matrix_str_size;
     int matrix_set_num;
+
+
+    //FND INSIDE
+    int fnd_i;
+    int fnd_dev;
+    unsigned char fnd_data[4];
+    unsigned char retval;
+    unsigned fnd_str_size;
+
+
+    //LED INSIDE
+    int led_dev;
+    unsigned char led_data;
+    unsigned char led_retval;
 
     //gaussian clicked
     bool blurSetting;

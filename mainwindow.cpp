@@ -72,6 +72,28 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     this->matrix_str_size = sizeof(fpga_number[0]);
 
+    //fnd device
+    this->fnd_dev = open(FND_DEVICE, O_RDWR);
+    this->fnd_str_size = (sizeof(unsigned char)*4);
+
+    if( this->fnd_dev < 0)
+    {
+        this->deviceBox.setText("Device Open Error -> matrix");
+        this->deviceBox.setInformativeText("Check your matrix");
+        this->deviceBox.exec();
+        exit(1);
+    }
+
+    //led device
+    this->led_dev = open(LED_DEVICE, O_RDWR);
+    if( this->led_dev < 0)
+    {
+        this->deviceBox.setText("Device Open Error -> led");
+        this->deviceBox.setInformativeText("Check your led");
+        this->deviceBox.exec();
+        exit(1);
+    }
+
 }
 MainWindow::~MainWindow()
 {
@@ -101,6 +123,12 @@ void MainWindow::on_captureBtn_clicked()
     }
     else
     {
+        for(int j = 0; j < 5; j++)
+        {
+            //matrix change
+            write(this->matrix_dev, fpga_number[5-j], this->matrix_str_size);
+            this_thread::sleep_for(chrono::seconds(1));
+        }
         waitpid(cam, 0, 0);
         QPixmap pix("tmp.jpg");
         this->ui->picLabel->setPixmap(pix);
@@ -280,6 +308,12 @@ void MainWindow::on_gageSlider_valueChanged(int value)
     QPixmap pix(QString::fromStdString(this->currentFileName));
     this->ui->picLabel->setPixmap(pix);
     ui->gageLevel->setText(QString::number(value));
+    this->fnd_data[0] = 0;
+    this->fnd_data[1] = 0;
+    this->fnd_data[2] = (unsigned char)(value/10);
+    this->fnd_data[3] = (unsigned char)(value%10);
+
+    write(this->fnd_dev, &this->fnd_data, 4);
 }
 
 void MainWindow::on_sharpenBtn_clicked()
@@ -366,6 +400,8 @@ void MainWindow::update()
             {
                 case 0: //capture
                 {
+                    unsigned char data = 0b00000001;
+                    write(this->led_dev, &data, 1);
                     pid_t cam = 0;
                     cam = fork();
                     if(cam == 0)
@@ -401,6 +437,8 @@ void MainWindow::update()
                 break;
                 case 1:
                 {
+                    unsigned char data = 0b00000010;
+                    write(this->led_dev, &data, 1);
                     //none capture
                     if(!this->captured)
                     {
@@ -422,6 +460,8 @@ void MainWindow::update()
                 break;
                 case 2:
                 {
+                    unsigned char data = 0b00000100;
+                    write(this->led_dev, &data, 1);
                     //none capture
                     if(!this->captured)
                     {
@@ -455,6 +495,8 @@ void MainWindow::update()
                 break;
                 case 3:
                 {
+                    unsigned char data = 0b00001000;
+                    write(this->led_dev, &data, 1);
                     //none capture
                     if(!this->captured)
                     {
@@ -484,6 +526,8 @@ void MainWindow::update()
                 break;
                 case 4:
                 {
+                    unsigned char data = 0b00010000;
+                    write(this->led_dev, &data, 1);
                     //none capture
                     if(!this->captured)
                     {
@@ -505,6 +549,8 @@ void MainWindow::update()
                 break;
                 case 5:
                 {
+                    unsigned char data = 0b00100000;
+                    write(this->led_dev, &data, 1);
                     //none capture
                     if(!this->captured)
                     {
@@ -526,7 +572,8 @@ void MainWindow::update()
                 break;
                 case 6:
                 {
-
+                    unsigned char data = 0b01000000;
+                    write(this->led_dev, &data, 1);
                     //copy
                     imwrite("tmp_changed.jpg", this->currentCaptured);
                     QPixmap pix("tmp_changed.jpg");
