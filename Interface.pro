@@ -32,7 +32,8 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h \
     libs/filecontrol.hpp \
     savedialog.h \
-    printprogress.h
+    printprogress.h \
+    fpga_dot_font.h
 
 FORMS    += mainwindow.ui \
     savedialog.ui \

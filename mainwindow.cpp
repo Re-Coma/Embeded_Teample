@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "savedialog.h"
 #include "printprogress.h"
+#include "fpga_dot_font.h"
 #include <stdlib.h>
 
 #include <unistd.h>
@@ -10,6 +11,8 @@
 #include <iostream>
 #include <string>
 #include <iostream>
+#include <thread>
+#include <chrono>
 
 #include <QPixmap>
 
@@ -57,6 +60,17 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
     this->push_buff_size = sizeof(push_sw_buff);
+
+    //matrix device
+    this->matrix_dev = open(FGPA_DOT_DEVICE, O_WRONLY);
+    if( this->matrix_dev < 0)
+    {
+        this->deviceBox.setText("Device Open Error -> matrix");
+        this->deviceBox.setInformativeText("Check your matrix");
+        this->deviceBox.exec();
+        exit(1);
+    }
+    this->matrix_str_size = sizeof(fpga_number[0]);
 
 }
 MainWindow::~MainWindow()
@@ -362,6 +376,13 @@ void MainWindow::update()
                     }
                     else
                     {
+                        for(int j = 0; j < 5; j++)
+                        {
+                            //matrix change
+                            write(this->matrix_dev, fpga_number[5-j], this->matrix_str_size);
+                            this_thread::sleep_for(chrono::seconds(1));
+                        }
+
                         waitpid(cam, 0, 0);
                         QPixmap pix("tmp.jpg");
                         this->ui->picLabel->setPixmap(pix);

@@ -23,6 +23,8 @@
 #define MAX_BUTTON  9
 #define FPGA_PUSH_SWITCH_DEVICE "/dev/fpga_push_switch"
 
+//MATRIX BUTTON
+#define FGPA_DOT_DEVICE "/dev/fpga_dot"
 
 using namespace cv;
 using namespace std;
@@ -85,6 +87,13 @@ private:
     int push_buff_size;
     unsigned char push_sw_buff[MAX_BUTTON];
     QMessageBox deviceBox;
+
+
+    //MATRIX INSIDE
+    int matrix_i;
+    int matrix_dev;
+    int matrix_str_size;
+    int matrix_set_num;
 
     //gaussian clicked
     bool blurSetting;

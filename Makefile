@@ -126,7 +126,8 @@ DIST          = /usr/lib/arm-linux-gnueabihf/qt5/mkspecs/features/spec_pre.prf \
 		Interface.pro mainwindow.h \
 		libs/filecontrol.hpp \
 		savedialog.h \
-		printprogress.h main.cpp \
+		printprogress.h \
+		fpga_dot_font.h main.cpp \
 		mainwindow.cpp \
 		libs/filecontrol.cpp \
 		savedialog.cpp \
@@ -285,7 +286,7 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents mainwindow.h libs/filecontrol.hpp savedialog.h printprogress.h $(DISTDIR)/
+	$(COPY_FILE) --parents mainwindow.h libs/filecontrol.hpp savedialog.h printprogress.h fpga_dot_font.h $(DISTDIR)/
 	$(COPY_FILE) --parents main.cpp mainwindow.cpp libs/filecontrol.cpp savedialog.cpp printprogress.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents mainwindow.ui savedialog.ui printprogress.ui $(DISTDIR)/
 
@@ -365,7 +366,8 @@ mainwindow.o: mainwindow.cpp mainwindow.h \
 		libs/filecontrol.hpp \
 		ui_mainwindow.h \
 		savedialog.h \
-		printprogress.h
+		printprogress.h \
+		fpga_dot_font.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o mainwindow.cpp
 
 filecontrol.o: libs/filecontrol.cpp libs/filecontrol.hpp
