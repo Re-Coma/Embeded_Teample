@@ -41,9 +41,28 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->gageLevel->hide();
     ui->gageSlider->hide();
 
+    // set timer
+    QTimer* timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
+    timer->start(100);
+
+    //push device
+    this->push_dev = open(FPGA_PUSH_SWITCH_DEVICE, O_RDWR);
+    if(this->push_dev < 0)
+    {
+        this->deviceBox.setText("Device Open Error => push button");
+        this->deviceBox.setInformativeText("Check your push button");
+        this->deviceBox.exec();
+        exit(1);
+    }
+
+    this->push_buff_size = sizeof(push_sw_buff);
+
 }
 MainWindow::~MainWindow()
 {
+    //close device
+     //close(this->push_dev);
     delete ui;
 }
 
@@ -318,5 +337,195 @@ void MainWindow::on_detectionBtn_clicked()
         imwrite("tmp_changed.jpg", result);
         QPixmap pix("tmp_changed.jpg");
         this->ui->picLabel->setPixmap(pix);
+    }
+}
+
+
+void MainWindow::update()
+{
+    read(push_dev, &push_sw_buff, this->push_buff_size);
+    for(this->push_i = 0; this->push_i<MAX_BUTTON; this->push_i++)
+    {
+        if(this->push_sw_buff[this->push_i] == 1)
+        {
+            switch(this->push_i)
+            {
+                case 0: //capture
+                {
+                    pid_t cam = 0;
+                    cam = fork();
+                    if(cam == 0)
+                    {
+                        execlp("raspistill", "raspistill", "-o", "tmp.jpg",
+                          "-w", "560", "-h", "280", NULL);
+                        exit(0);
+                    }
+                    else
+                    {
+                        waitpid(cam, 0, 0);
+                        QPixmap pix("tmp.jpg");
+                        this->ui->picLabel->setPixmap(pix);
+                        this->captured = true; //set to capture mode
+
+                        //Change Label
+                        this->ui->fileName->setText("CAPTURED FILE!!");
+                        this->currentCaptured = imread("tmp.jpg", IMREAD_COLOR);
+                        this->currentFileName = "tmp.jpg";
+
+                        //copy
+                        imwrite("tmp_changed.jpg", this->currentCaptured);
+                        this->currentFileName = "tmp_changed.jpg";
+                    }
+                }
+                break;
+                case 1:
+                {
+                    //none capture
+                    if(!this->captured)
+                    {
+                        QMessageBox warningBox;
+                        warningBox.setText("Warning");
+                        warningBox.setInformativeText("Capture your Picture First!");
+                        warningBox.setStandardButtons(QMessageBox::Ok);
+                        warningBox.exec();
+                    }
+                    else //captured
+                    {
+                        this->changedCaptured = imread("tmp_changed.jpg", IMREAD_GRAYSCALE);
+                        imwrite("tmp_changed.jpg", this->changedCaptured);
+
+                        QPixmap pix("tmp_changed.jpg");
+                        this->ui->picLabel->setPixmap(pix);
+                    }
+                }
+                break;
+                case 2:
+                {
+                    //none capture
+                    if(!this->captured)
+                    {
+                        QMessageBox warningBox;
+                        warningBox.setText("Warning");
+                        warningBox.setInformativeText("Capture your Picture First!");
+                        warningBox.setStandardButtons(QMessageBox::Ok);
+                        warningBox.exec();
+                    }
+                    else
+                    {
+                        //none_click->click
+                        if(!this->blurSetting )
+                        {
+                            this->blurSetting = true;
+                            ui->gageName->show();
+                            ui->gageLevel->show();
+                            ui->gageSlider->show();
+                            gaussiantmp = imread(this->currentFileName);
+                        }
+                        //click->non_click
+                        else
+                        {
+                            this->blurSetting = false;
+                            ui->gageName->hide();
+                            ui->gageLevel->hide();
+                            ui->gageSlider->hide();
+                        }
+                    }
+                }
+                break;
+                case 3:
+                {
+                    //none capture
+                    if(!this->captured)
+                    {
+                        QMessageBox warningBox;
+                        warningBox.setText("Warning");
+                        warningBox.setInformativeText("Capture your Picture First!");
+                        warningBox.setStandardButtons(QMessageBox::Ok);
+                        warningBox.exec();
+                    }
+                    else
+                    {
+                        auto img = imread("tmp_changed.jpg", CV_LOAD_IMAGE_COLOR);
+
+                        vector<Mat> channels;
+                        Mat img_hist_equalized;
+                        cvtColor(img, img_hist_equalized, CV_BGR2YCrCb);
+                        cv::split(img_hist_equalized, channels);
+                        equalizeHist(channels[0], channels[0]);
+                        merge(channels, img_hist_equalized);
+                        cvtColor(img_hist_equalized, img_hist_equalized,CV_YCrCb2BGR);
+
+                        imwrite("tmp_changed.jpg", img_hist_equalized);
+                        QPixmap pix("tmp_changed.jpg");
+                        this->ui->picLabel->setPixmap(pix);
+                    }
+                }
+                break;
+                case 4:
+                {
+                    //none capture
+                    if(!this->captured)
+                    {
+                        QMessageBox warningBox;
+                        warningBox.setText("Warning");
+                        warningBox.setInformativeText("Capture your Picture First!");
+                        warningBox.setStandardButtons(QMessageBox::Ok);
+                        warningBox.exec();
+                    }
+                    else
+                    {
+                        auto result = imread("tmp_changed.jpg", IMREAD_COLOR);
+                        bitwise_not(result, result);
+                        imwrite("tmp_changed.jpg", result);
+                        QPixmap pix("tmp_changed.jpg");
+                        this->ui->picLabel->setPixmap(pix);
+                    }
+                }
+                break;
+                case 5:
+                {
+                    //none capture
+                    if(!this->captured)
+                    {
+                        QMessageBox warningBox;
+                        warningBox.setText("Warning");
+                        warningBox.setInformativeText("Capture your Picture First!");
+                        warningBox.setStandardButtons(QMessageBox::Ok);
+                        warningBox.exec();
+                    }
+                    else
+                    {
+                        auto result = imread("tmp_changed.jpg", IMREAD_COLOR);
+                        Canny(result, result, 50, 200);
+                        imwrite("tmp_changed.jpg", result);
+                        QPixmap pix("tmp_changed.jpg");
+                        this->ui->picLabel->setPixmap(pix);
+                    }
+                }
+                break;
+                case 6:
+                {
+
+                    //copy
+                    imwrite("tmp_changed.jpg", this->currentCaptured);
+                    QPixmap pix("tmp_changed.jpg");
+                    this->ui->picLabel->setPixmap(pix);
+                    this->currentFileName = "tmp_changed.jpg";
+
+                    //copy
+
+                    //reset gaussian gage
+                    this->ui->gageLevel->setText(QString::number(0));
+                    this->ui->gageName->hide();
+                    this->ui->gageLevel->hide();
+                    this->ui->gageSlider->hide();
+                    this->ui->gageSlider->setValue(0);
+                }
+                break;
+                case 7:
+                break;
+
+            }
+        }
     }
 }

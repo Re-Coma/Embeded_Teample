@@ -7,8 +7,22 @@
 #include <QMessageBox>
 #include "libs/filecontrol.hpp"
 
+#include <QTimer>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/io.h>
+#include <signal.h>
+
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>
+
+/* Push button */
+#define MAX_BUTTON  9
+#define FPGA_PUSH_SWITCH_DEVICE "/dev/fpga_push_switch"
+
 
 using namespace cv;
 using namespace std;
@@ -26,6 +40,7 @@ public:
     ~MainWindow();
 
 private slots:
+    void update();
     void on_exitBtn_clicked();
 
     void on_captureBtn_clicked();
@@ -63,6 +78,13 @@ private:
     Mat gaussiantmp; //only Gaussian
 
     string currentFileName;
+
+    // PUSH BUTTON
+    int push_i;
+    int push_dev;
+    int push_buff_size;
+    unsigned char push_sw_buff[MAX_BUTTON];
+    QMessageBox deviceBox;
 
     //gaussian clicked
     bool blurSetting;
